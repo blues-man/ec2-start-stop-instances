@@ -1,6 +1,6 @@
 # ec2-start-stop-instances
 
-A small Python script to auto start-stop instances on Amazon AWS EC2
+A small Python script using boto to auto start-stop instances on Amazon AWS EC2
 
 ## Usage:
 
