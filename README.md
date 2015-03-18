@@ -6,7 +6,7 @@ A small Python script using boto to auto start-stop instances on Amazon AWS EC2
 
 First, you need Python [Boto](https://github.com/boto/boto)
 
-Boto already is already installed in most Amazon EC2 AMIs, if you are running it elsewhere, just:
+Boto is already installed in most Amazon EC2 AMIs, if you are running it elsewhere, just:
 
 ### Debian/Ubuntu
 
