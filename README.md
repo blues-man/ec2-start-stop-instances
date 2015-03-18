@@ -52,12 +52,39 @@ Stop and Email alert
 ```
 ## Use case
 
-You want to start/stop instance at the needing, for example day/night business days with a crontab:
+### Crontab 
+
+You may want to start/stop instance at the needing, for example day/night business days with a crontab:
 
 ```bash
 0 7 * * 1-5  /opt/aws_start_stop.py -O yourAccessKey -W yourSecretKey -r eu-west-1 -i i-caf3b4be,i-deadb33f -a start -e >/dev/null 2>&1
 0 18 * * 1-5 /opt/aws_start_stop.py  -O yourAccessKey -W yourSecretKey -r eu-west-1 -i i-caf3b4be,i-deadb33f -a stop -e >/dev/null 2>&1
 ```
+
+### AWS IAM Role
+
+You may want to restrict the capability of starting or stopping instances to some users and some instances, this could be done by creating an AWS IAM Role for a user with a custom policy mapping the proper ARN instance as:
+
+```yaml
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:StartInstances",
+                "ec2:StopInstances"
+            ],
+            "Resource": [
+                "arn:aws:ec2:REGION_ID:ACCOUNT_ID:instance/INSTANCE_ID1"
+                "arn:aws:ec2:REGION_ID:ACCOUNT_ID:instance/INSTANCE_ID2",
+            ]
+        }
+    ]
+}
+```
+
+
 
 ## Mail Notification
 
