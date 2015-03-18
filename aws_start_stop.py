@@ -22,6 +22,8 @@
 # without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
 # See the GNU General Public License for more details.
 #
+# v. 0.2 : Email alert optional
+# v. 0.1 : Support email alert
 
 import boto.ec2, sys, smtplib, time, getopt
 from email.mime.text import MIMEText
@@ -57,7 +59,9 @@ def usage(err):
 
 def help():
 
-	usage(sys.argv[0] + " -O accessKey -W secretKey -r eu-west-1 -i i-caf3b4be,i-deadb33f -a start|stop")
+	usage( "AWS Start Stop Instances by bluesman " + VERSION + "\n"+
+	      "Standard use:\t" + sys.argv[0] + " -O accessKey -W secretKey -r eu-west-1 -i i-caf3b4be,i-deadb33f -a start|stop\n" +
+	      "Email Alert:\t" + sys.argv[0] + " -O accessKey -W secretKey -r eu-west-1 -i i-caf3b4be,i-deadb33f -a start|stop -e")
 
 def main():
 
@@ -70,9 +74,10 @@ def main():
 	aws_secret_key = ''
 	instances_id = []
 	action = ''
+	alert = False
 
  	try:
-        	options, args = getopt.getopt(sys.argv[1:], "O:W:r:i:a:h", ["help", 
+        	options, args = getopt.getopt(sys.argv[1:], "O:W:r:i:a:he", ["help", "alert"
 									"aws-access-key=", 
 									"aws-secret-key=",
 									"region_id=", 
@@ -83,20 +88,24 @@ def main():
 
 
 	for opt, arg in options:
-		if opt in ('-O', '--aws-access-key'):
-			aws_access_key = arg
-		elif opt in ('-W', '--aws-secret-key'):
-			aws_secret_key = arg
-                elif opt in ('-r', '--region-id'):
-                        region_id = arg
-                elif opt in ('-i', '--instances_id'):
-                        instance_id = arg
-                elif opt in ('-a', '--action'):
-                        action = arg
-		elif opt in ('-h', '--help'):
-			help()
- 
+			if opt in ('-O', '--aws-access-key'):
+					aws_access_key = arg
+			elif opt in ('-W', '--aws-secret-key'):
+					aws_secret_key = arg
+			elif opt in ('-r', '--region-id'):
+					region_id = arg
+			elif opt in ('-i', '--instances_id'):
+					instance_id = arg
+			elif opt in ('-a', '--action'):
+					action = arg
+			elif opt in ('-e', '--email-alert'):
+					alert = True
+			elif opt in ('-h', '--help'):
+					help()
+
+
 	instances_id = instance_id.split(",")
+
 	
 
 	if (action != ACTION_START and action != ACTION_STOP):
@@ -104,7 +113,7 @@ def main():
 	
 	conn = boto.ec2.connect_to_region(region_id, aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_key)
 	if (conn == None):
-		sendmail(mail_sender, mail_receivers, "Unable to connect to AWS to %s instances %s" % (action, str(instances_id)), "Connection aborted")
+		if alert: sendmail(mail_sender, mail_receivers, "Unable to connect to AWS to %s instances %s" % (action, str(instances_id)), "Connection aborted")
 		sys.exit(-1)
 	
 	result = []
@@ -117,14 +126,16 @@ def main():
 	
 	if (len(result) == len(instances_id)):
 		print("Success: %s : %s" % (action, str(result)) )
-		send_aws_mail(action, str(result))
+		if alert: send_aws_mail(action, str(result))
 	else:
-		sendmail(mail_sender, mail_receivers, "Error %s instances %s" % (action, str(instances_id)), "Some operation failed, check the instance list: %s" % (str(result)))
+		if alert: sendmail(mail_sender, mail_receivers, "Error %s instances %s" % (action, str(instances_id)), "Some operation failed, check the instance list: %s" % (str(result)))
+		print("Error %s instances %s" % (action, str(instances_id)))
 	return
 
 
 if __name__ == "__main__":
 
+	VERSION = "v. 0.2"
 	ACTION_START = "start"
 	ACTION_STOP = "stop"
 	mail_sender = 'aws-alert@yourserver.com'
