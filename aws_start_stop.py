@@ -1,26 +1,24 @@
 #!/usr/bin/python
-# Start/Stop AWS instances on the ->fly 
-#
-# Usage: ./aws_start_stop.py -O yourAccessKey -W yourSecretKey -r eu-west-1 -i i-caf3b4be,i-deadb33f -a start|stop
-#        ./aws_start_stop.py -h
-# 
-# Use case:
-# You want to start/stop instance at the needing, for example day/night business days with a crontab:
-# 0 7 * * 1-5  /opt/aws_start_stop.py -O yourAccessKey -W yourSecretKey -r eu-west-1 -i i-caf3b4be,i-deadb33f -a start >/dev/null 2>&1
-# 0 18 * * 1-5 /opt/aws_start_stop.py  -O yourAccessKey -W yourSecretKey -r eu-west-1 -i i-caf3b4be,i-deadb33f -a stop  >/dev/null 2>&1
-# 
-# Mail notification:
-# A mail is sent to you in order to notify about the operation status, anyway is optional. 
-# Fill 'mail_sender' and 'mail_receivers' if you want to be notified by email about operation status
-# SMTP server if supposed to run in localhost, please adjust with your settings if you run it elsewhere
-#
-# Copyright (C) 2015  Natale Vinto <ebballon@gmail.com>
-#
-# This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-# See the GNU General Public License for more details.
+############################################################################
+#    aws_start_stop.py: Start/Stop AWS instances on the->fly with Boto     #
+#    Copyright (C) 2014-2015 by Natale Vinto aka bluesman                  #
+#    ebballon@gmail.com                                                    #
+#                                                                          #
+#    This program is free software; you can redistribute it and#or modify  #
+#    it under the terms of the GNU General Public License as published by  #
+#    the Free Software Foundation; either version 2 of the License, or     #
+#    (at your option) any later version.                                   #
+#                                                                          #
+#    This program is distributed in the hope that it will be useful,       #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+#    GNU General Public License for more details.                          #
+#                                                                          #
+#    You should have received a copy of the GNU General Public License     #
+#    along with this program; if not, write to the                         #
+#    Free Software Foundation, Inc.,                                       #
+#    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
+############################################################################
 #
 # v. 0.2 : Email alert optional
 # v. 0.1 : Support email alert
